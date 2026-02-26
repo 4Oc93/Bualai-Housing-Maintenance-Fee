@@ -12,21 +12,32 @@ import base64
 st.set_page_config(page_title="ระบบเก็บเงินส่วนกลาง", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================
-# 🚨 ตั้งค่าลิงก์และ ID สำคัญตรงนี้ 🚨
+# ตั้งค่าลิงก์และ ID
 # ==========================================
 DRIVE_FOLDER_ID = "1TBtWb9n8ju2cgBfiwOHJFKhktidxv7d-" 
 SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/1_1mz0yCDSXHHAYFiYPWGifugAJHwliD7iv8dtF-8Ohs/edit"
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2YdRqtZKoB0M2vh_vYUPeps4_rb4zTP_r0hMBzsbMqqzKIhMQmNVH1e5sCyomfM6l92gCnpd3oqc3/pub?gid=922014835&single=true&output=csv"
 # ==========================================
 
-# 🍏 สไตล์ Apple & ล็อกขนาด KPI ขั้นเด็ดขาด (145px)
+# 🍏 & CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
-    * { font-family: '-apple-system', 'BlinkMacSystemFont', 'Prompt', sans-serif !important; }
+    
+    /* บังคับใช้ฟอนต์ Apple กับทุกอย่าง ยกเว้น... */
+    * { font-family: '-apple-system', 'BlinkMacSystemFont', 'Prompt', sans-serif; }
+    
+    /* 🌟 แก้ไขที่ 1: ดึงฟอนต์ไอคอนของระบบกลับมา (แก้ปัญหาคำว่า keyboard_double_arrow_left) */
+    .material-symbols-rounded, .material-symbols-outlined, [class*="material-symbols"] {
+        font-family: 'Material Symbols Rounded', 'Material Icons' !important;
+    }
+
     .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* 🌟 แก้ไขที่ 2: ยกเลิกการซ่อน Header เพื่อให้ปุ่มมือถือกลับมา แต่ซ่อนเฉพาะปุ่ม Deploy ขวาบนแทน */
+    #MainMenu {visibility: hidden;} /* ซ่อนเมนู 3 จุด */
+    [data-testid="stToolbar"] {visibility: hidden;} /* ซ่อนปุ่มต่างๆ มุมขวาบน */
+    [data-testid="stHeader"] { background-color: transparent !important; } /* ให้ Header โปร่งใส เนียนไปกับพื้นหลัง */
     
     /* 🌟 Apple Style KPI Cards: ล็อกขนาดตายตัว 145px */
     [data-testid="stMetric"] {
@@ -74,7 +85,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 🚀 ฟังก์ชันอัปโหลดไฟล์ผ่านสะพาน GAS ---
+# --- 🚀 ฟังก์ชันอัปโหลดไฟล์ผ่าน GAS ---
 def upload_via_gas(file_bytes, filename, mimetype):
     try:
         gas_url = st.secrets.get("gas_url")
@@ -233,7 +244,7 @@ if selected_month and not df.empty:
                     'axis': {'range': [0, 100], 'visible': False},
                     'bar': {'color': "#34C759", 'thickness': 0.85}, 
                     'bgcolor': "rgba(130,130,130,0.06)", 
-                    'borderwidth': 0, # 🌟 เอาเส้นขอบออก
+                    'borderwidth': 0, # เอาเส้นขอบออก
                 }
             ))
             fig.update_layout(margin=dict(t=20, b=10, l=10, r=10), paper_bgcolor='rgba(0,0,0,0)', height=280)
