@@ -8,36 +8,38 @@ import traceback
 import requests
 import base64
 
-# --- 1. ตั้งค่าหน้าเว็บ (Page Configuration) ---
+# --- 1. Page Configuration ---
 st.set_page_config(page_title="ระบบเก็บเงินส่วนกลาง", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================
-# ตั้งค่าลิงก์และ ID
+#  ตั้งค่าลิงก์และ ID 
 # ==========================================
 DRIVE_FOLDER_ID = "1TBtWb9n8ju2cgBfiwOHJFKhktidxv7d-" 
 SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/1_1mz0yCDSXHHAYFiYPWGifugAJHwliD7iv8dtF-8Ohs/edit"
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2YdRqtZKoB0M2vh_vYUPeps4_rb4zTP_r0hMBzsbMqqzKIhMQmNVH1e5sCyomfM6l92gCnpd3oqc3/pub?gid=922014835&single=true&output=csv"
 # ==========================================
 
-# 🍏 & CSS
+# Safe for Cloud
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
     
-    /* บังคับใช้ฟอนต์ Apple กับทุกอย่าง ยกเว้น... */
-    * { font-family: '-apple-system', 'BlinkMacSystemFont', 'Prompt', sans-serif; }
+    /* 🌟 แก้ไขที่ 1: เปลี่ยนฟอนต์แบบปลอดภัย (ไม่ใช้ * !important เพื่อป้องกันไอคอนพัง) */
+    html, body, div, span, p, h1, h2, h3, h4, h5, h6, li, a, button, input, select, textarea {
+        font-family: '-apple-system', 'BlinkMacSystemFont', 'Prompt', sans-serif;
+    }
     
-    /* 🌟 แก้ไขที่ 1: ดึงฟอนต์ไอคอนของระบบกลับมา (แก้ปัญหาคำว่า keyboard_double_arrow_left) */
-    .material-symbols-rounded, .material-symbols-outlined, [class*="material-symbols"] {
+    /* 🌟 แก้ไขที่ 2: คืนชีพฟอนต์ไอคอนให้กลับมาทำงาน 100% (แก้ปัญหาคำว่า keyboard_double...) */
+    .material-symbols-rounded, .material-symbols-outlined, [class*="material-symbols"], .stIcon {
         font-family: 'Material Symbols Rounded', 'Material Icons' !important;
     }
 
     .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
     
-    /* 🌟 แก้ไขที่ 2: ยกเลิกการซ่อน Header เพื่อให้ปุ่มมือถือกลับมา แต่ซ่อนเฉพาะปุ่ม Deploy ขวาบนแทน */
-    #MainMenu {visibility: hidden;} /* ซ่อนเมนู 3 จุด */
-    [data-testid="stToolbar"] {visibility: hidden;} /* ซ่อนปุ่มต่างๆ มุมขวาบน */
-    [data-testid="stHeader"] { background-color: transparent !important; } /* ให้ Header โปร่งใส เนียนไปกับพื้นหลัง */
+    /* 🌟 แก้ไขที่ 3: ยกเลิกการซ่อน stToolbar ตามที่ทีมแนะนำ ซ่อนเฉพาะ Deploy/Menu */
+    [data-testid="stHeader"] { background-color: transparent !important; }
+    .stAppDeployButton, [data-testid="stAppDeployButton"] { display: none !important; }
+    #MainMenu { display: none !important; }
     
     /* 🌟 Apple Style KPI Cards: ล็อกขนาดตายตัว 145px */
     [data-testid="stMetric"] {
